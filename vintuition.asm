@@ -273,7 +273,7 @@
 
   draw_menu:
 
-    # Load menu screen from .data section
+  # Load menu screen from .data section
 
     li    $t0,  BASE_ADDRESS
     la    $t1,  menu
@@ -296,9 +296,9 @@
 
   # Load win screen from .data section
 
-  li      $t0,  BASE_ADDRESS
-  la      $t1,  win_screen
-  addi    $t3,  $zero,  1
+    li      $t0,  BASE_ADDRESS
+    la      $t1,  win_screen
+    addi    $t3,  $zero,  1
 
   draw_win_screen_loop:
 
