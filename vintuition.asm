@@ -327,6 +327,8 @@
 
   # The character will take up 8 units of space,
   # we will need one procedure for every line.
+  
+  li  $t8,  char_pos
 
   erase_character:
 
@@ -338,6 +340,13 @@
   # Four functions for each direction
 
   move_left:
+
+    jal   erase_character
+    addi  $t8,  $t8,  -8
+    jal   draw_character
+    
+    jr    $ra
+    
 
   move_right:
 
@@ -369,7 +378,7 @@
 
 		lw    $t2,  0($t0)      # Read Receiver Control register
 		andi  $t2,  $t2,  1     # Mask out Ready bit
-		beqz  $t2,  loop
+		beqz  $t2,  read_input_loop
     beq   $t2,  104,  move_left
     beq   $t2,  106,  move_down
     beq   $t2,  107,  move_up
