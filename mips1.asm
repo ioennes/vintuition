@@ -417,7 +417,7 @@
 
     li    $t8,  char_pos
   
-    jal 	draw_menu
+  	jal 	draw_menu
 
     jal   read_input
     jal   read_input
@@ -447,13 +447,6 @@
 
     jr    $ra
 
-  initialize:
-  
-  	jal	draw_play_area
-  	jal	generate_target_positions
-  	jal	draw_character_right
-  	jr	$ra
-
   draw_win_screen:
 
   # Load win screen from .data section
@@ -474,7 +467,7 @@
     bne   $t3,  16384,  draw_win_screen_loop
 
     jal   read_input
-    
+
   draw_play_area:
 
   # Load win screen from .data section
@@ -497,7 +490,6 @@
     jr    $ra
 
   ### DRAWING THE CHARACTER ###
-
 
   draw_character_up:
 
@@ -581,7 +573,7 @@
     sw    $s0,  28($t8)
     addi  $t8,  $t8,  -3584
 
-    jal 	read_input
+    jr    $ra
 
   draw_character_down:
 
@@ -663,7 +655,7 @@
     sw    $s0,  16($t8)
     addi  $t8,  $t8,  -3584
 
-    jal 	read_input
+    jr    $ra
 
   draw_character_right:
 
@@ -745,7 +737,7 @@
     sw    $s2,  16($t8)
     addi  $t8,  $t8,  -3584
 
-    jal 	read_input
+    jr    $ra
 
   draw_character_left:
 
@@ -819,7 +811,7 @@
     addi  $t8,  $t8,  512
 
   draw_line_8l:
-  
+
     sw    $s2,  12($t8)
     sw    $s0,  16($t8)
     sw    $s0,  20($t8)
@@ -827,7 +819,7 @@
     sw    $s0,  28($t8)
     addi  $t8,  $t8,  -3584
 
-    jal 	read_input
+    jr    $ra
 
   move_character:
 
@@ -835,139 +827,44 @@
   # Four functions for each direction
 
   move_left:
-
-    jal	  draw_play_area
-    jal	  draw_targets
-    addi  $t8,  $t8,  -8 
-    jal   draw_character_left
-
+	
+    jal     draw_play_area
+    addi    $t8,  $t8,  -8 
+    jal     draw_character_left
+    
+    jal 	read_input
     
   move_right:
 
-    jal	  draw_play_area
-    jal	  draw_targets
-    addi  $t8,  $t8,  8 
-    jal   draw_character_right
+    jal     draw_play_area
+    addi    $t8,  $t8,  8 
+    jal     draw_character_right
+    
+    jal 	read_input
 
     
   move_down:
 
-    jal	  draw_play_area
-    jal	  draw_targets
-    addi  $t8,  $t8,  1024
-    jal   draw_character_down
-
+    jal     draw_play_area
+    addi    $t8,  $t8,  1024
+    jal     draw_character_down
+    
+    jal 	read_input
 
   move_up:
 
-    jal	  draw_play_area
-    jal	  draw_targets
-    addi  $t8,  $t8,  -1024
-    jal   draw_character_up
-
+    jal     draw_play_area
+    addi    $t8,  $t8,  -1024
+    jal     draw_character_up
+    
+    jal 	read_input
     
 
-  ### DRAWING THE TARGET ###
-  
-  generate_target_positions:
+  ### TARGETS ###
 
-  generate_position_1:
-    
-    addi 	$a1, $zero,	65536
-    li 	  $v0,	42
-    syscall
-    
-    andi	$s4, $a0,	-4
-    
-  generate_position_2:
-    
-    addi 	$a1, $zero,	65536
-    li 	  $v0,	42
-    syscall
-    
-    andi	$s5, $a0,	-4
+  generate_targets:
 
-  generate_position_3:
-    
-    addi 	$a1, $zero,	65536
-    li 	  $v0,	42
-    syscall
-    
-    andi	$s6, $a0,	-4
-
-  draw_targets:
-
-    li    $s3,  0x00FBFE26
-    li    $t0,  BASE_ADDRESS
-    li    $t2,  0
-
-  draw_target_1:
-  
-    sw	$ra,	16($sp)
-
-    add   $t9,  $s4,  $t0
-    jal   draw_target
-
-  draw_target_2:
-  
-    addi  $t2,  $t2,  1
-    add   $t9,  $s5,  $t0
-    jal   draw_target
-
-  draw_target_3:
-  
-  
-	li	$t3,	9	
-
-    addi  $t2,  $t2,  1
-    add   $t9,  $s6,  $t0
-    jal   draw_target
-    
-    jr    $ra
-
-  draw_target:
-
-  draw_line_1t:
-
-    sw    $s3,  8($t9)
-    addi  $t9,  $t9,  512 
-
-  draw_line_2t:
-
-    sw    $s3,  4($t9)
-    sw    $s3,  8($t9)
-    sw    $s3,  12($t9)
-    addi  $t9,  $t9,  512
-
-  draw_line_3t:
-
-    sw    $s3,  0($t9)
-    sw    $s3,  4($t9)
-    sw    $s3,  8($t9)
-    sw    $s3,  12($t9)
-    sw    $s3,  16($t9)
-    addi  $t9,  $t9,  512
-
-  draw_line_4t:
-
-    sw    $s3,  4($t9)
-    sw    $s3,  8($t9)
-    sw    $s3,  12($t9)
-    addi  $t9,  $t9,  512
-
-  draw_line_5t:
-
-    sw    $s3,  8($t9)
-    addi  $t9,  $t9,  -2048
-    
-    beq 	$t3,	9,	continue
-
-    jr    $ra
-    
-  continue:
-  
-  	lw	  $ra,	16($sp)
-  	jr	  $ra
+  # Create randomly placed dots the character must capture
 
   target_captured:
 
@@ -994,6 +891,6 @@
     beq   $t3,  106,  move_down
     beq   $t3,  107,  move_up
     beq   $t3,  108,  move_right
-    beq   $t3,  10,   initialize
+    beq   $t3,  10,   draw_play_area
 
     jal 	read_input_loop
