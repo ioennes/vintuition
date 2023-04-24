@@ -415,6 +415,8 @@
 
   main:
 
+    
+    li    $t4,  0
     li    $t8,  char_pos
   
     jal 	draw_menu
@@ -476,6 +478,8 @@
     jal   read_input
     
   draw_play_area:
+  
+    beq     $t4,  3,  draw_win_screen
 
   # Load win screen from .data section
 
@@ -507,6 +511,8 @@
     li    $s0,  0x00F9F9F9    # white
     li    $s1,  0x00687FA5    # blue
     li    $s2,  0x00C2323F    # red
+    addi  $a2,  $t8,	12
+    addi  $v1,  $t8,	16
 
 
   draw_line_1u:
@@ -581,6 +587,8 @@
     sw    $s0,  28($t8)
     addi  $t8,  $t8,  -3584
 
+    jal   draw_score
+    jal   target_captured
     jal 	read_input
 
   draw_character_down:
@@ -589,6 +597,8 @@
     li    $s0,  0x00F9F9F9    # white
     li    $s1,  0x00687FA5    # blue
     li    $s2,  0x00C2323F    # red
+    addi  $a2,  $t8,	4108
+    addi  $v1,  $t8,	4112
 
 
   draw_line_1d:
@@ -663,15 +673,17 @@
     sw    $s0,  16($t8)
     addi  $t8,  $t8,  -3584
 
+    jal   draw_score 
+    jal   target_captured
     jal 	read_input
 
   draw_character_right:
 
-
     li    $s0,  0x00F9F9F9    # white
     li    $s1,  0x00687FA5    # blue
     li    $s2,  0x00C2323F    # red
-
+    addi  $a2,  $t8,	2076
+    addi  $v1,  $t8,	2588
 
   draw_line_1r:
 
@@ -745,6 +757,8 @@
     sw    $s2,  16($t8)
     addi  $t8,  $t8,  -3584
 
+    jal 	draw_score
+    jal   target_captured
     jal 	read_input
 
   draw_character_left:
@@ -753,6 +767,8 @@
     li    $s0,  0x00F9F9F9    # white
     li    $s1,  0x00687FA5    # blue
     li    $s2,  0x00C2323F    # red
+    addi  $a2,  $t8,	2048
+    addi  $v1,  $t8,	2560
 
 
   draw_line_1l:
@@ -827,6 +843,8 @@
     sw    $s0,  28($t8)
     addi  $t8,  $t8,  -3584
 
+    jal 	draw_score
+    jal     target_captured
     jal 	read_input
 
   move_character:
@@ -836,37 +854,191 @@
 
   move_left:
 
-    jal	  draw_play_area
+    jal 	draw_play_area
     jal	  draw_targets
+
     addi  $t8,  $t8,  -8 
     jal   draw_character_left
-
     
   move_right:
 
-    jal	  draw_play_area
+    jal 	draw_play_area
     jal	  draw_targets
+
     addi  $t8,  $t8,  8 
     jal   draw_character_right
-
     
   move_down:
-
-    jal	  draw_play_area
+    
+    jal 	draw_play_area
     jal	  draw_targets
+
     addi  $t8,  $t8,  1024
     jal   draw_character_down
 
-
   move_up:
 
-    jal	  draw_play_area
+    jal   target_captured
+    jal 	draw_play_area
     jal	  draw_targets
+    
     addi  $t8,  $t8,  -1024
     jal   draw_character_up
+    jal   target_captured
 
+  ### DRAW SCORES ###
+
+  draw_score:
+
+    li    $s7,  0x00FFFFFF
+    li    $t7,  0x100081E8
+    
+    beq   $t4,  0,  draw_score_0
+    beq   $t4,  1,  draw_score_1
+    beq   $t4,  2,  draw_score_2
+    beq   $t4,  3,  draw_score_3
+
+  draw_score_0:
+    
+  draw_line_1z:
+
+    sw    $s7,  0($t7)     
+    sw    $s7,  4($t7)
+    sw    $s7,  8($t7)
+    addi  $t7,  $t7,  512
+    
+  draw_line_2z:
+  
+    sw    $s7,  0($t7)  
+    sw    $s7,  8($t7)
+    addi  $t7,  $t7,  512
+
+  draw_line_3z:
+  
+    sw    $s7,  0($t7)  
+    sw    $s7,  8($t7)
+    addi  $t7,  $t7,  512
+
+  draw_line_4z:
+  
+    sw    $s7,  0($t7)  
+    sw    $s7,  8($t7)
+    addi  $t7,  $t7,  512
+
+  draw_line_5z:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)
+    sw    $s7,  8($t7)
+
+    addi  $t7,  $t7,  -2048
+
+    jr    $ra
+
+  draw_score_1:
+
+  draw_line_1o:
+
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  512
     
 
+  draw_line_2o:
+  
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_3o:
+  
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_4o:
+  
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_5o:
+
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  -2048
+
+    jr    $ra
+
+  draw_score_2:
+  
+  draw_line_1tw:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_2tw:
+  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_3tw:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_4tw:
+
+  
+    sw    $s7,  0($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_5tw:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+
+    addi  $t7,  $t7,  -2048
+
+    jr    $ra
+
+  draw_score_3:
+
+  draw_line_1th:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+    
+
+  draw_line_2th:
+  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_3th:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_4th:
+  
+    sw    $s7,  8($t7)  
+    addi  $t7,  $t7,  512
+
+  draw_line_5th:
+
+    sw    $s7,  0($t7)  
+    sw    $s7,  4($t7)  
+    sw    $s7,  8($t7)  
+
+    addi  $t7,  $t7,  -2048
+
+    jr    $ra
+    
   ### DRAWING THE TARGET ###
   
   generate_target_positions:
@@ -917,7 +1089,7 @@
   draw_target_3:
   
   
-	li	$t3,	9	
+    li	$t3,	9	
 
     addi  $t2,  $t2,  1
     add   $t9,  $s6,  $t0
@@ -971,8 +1143,64 @@
 
   target_captured:
 
-  # Increase character score by 1. If 5 captured, generate win screen.
+  # Increase character score by 1. If 3 captured, generate win screen.
   # We know of capture if char_pos == target_pos.
+
+    li    $t5,  BASE_ADDRESS
+    addi  $t5,  $t5,  1040
+    
+    add   $t2,  $s4,  $t5
+    sub   $t6,  $t2,  $v1
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s4
+    sub   $t6,  $t2,  $a2
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s4
+    
+    li    $t5,  BASE_ADDRESS
+    addi  $t5,  $t5,  1040
+    
+    add   $t2,  $s5,  $t5
+    sub   $t6,  $t2,  $v1
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s5
+    sub   $t6,  $t2,  $a2
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s4
+    
+    li    $t5,  BASE_ADDRESS
+    addi  $t5,  $t5,  1040
+    
+    add   $t2,  $s6,  $t5
+    sub   $t6,  $t2,  $v1
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s6
+    sub   $t6,  $t2,  $a2
+    abs   $t6,  $t6
+    blt   $t6,  64, adder_s4
+
+    jr    $ra
+
+  adder_s4:
+
+    addi  $t4,  $t4,  1 
+    li    $s4,  0x000000C0
+
+    jr    $ra
+
+  adder_s5:
+
+    addi  $t4,  $t4,  1 
+    li    $s5,  0x000000D0
+
+    jr    $ra
+
+  adder_s6:
+
+    addi  $t4,  $t4,  1 
+    li    $s6,  0x000000E0
+
+    jr    $ra
 
   ### INPUT ###
 
