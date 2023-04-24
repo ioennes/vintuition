@@ -30,6 +30,7 @@ To create the character, we can't just load an image array into the screen and l
 1. Unaligned addresses
 2. Very complex nested for loops
 3. Block representations without transparency
+
 So, to create the characters, we had to manually load pixels one by one into their appropriate positions (starting at char_pos)
 
 ### Character Movement
